@@ -10,126 +10,398 @@
 <style>
 :root {
   color-scheme: light dark;
-  --bg: #fdfcfc; --fg: #201d1d; --dim: #646262; --faint: #9a9898;
-  --line: #dcd9d9; --accent: #b45309; --active: #f4f0ef;
+  --bg: #fdfcfc;
+  --fg: #201d1d;
+  --dim: #646262;
+  --faint: #9a9898;
+  --line: #dcd9d9;
+  --accent: #b45309;
+  --active: #f4f0ef;
+  --surface: #faf8f7;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #161313;
+  --fg: #f1eeee;
+  --dim: #9a9898;
+  --faint: #646262;
+  --line: #302c2c;
+  --accent: #f59e0b;
+  --active: #211d1d;
+  --surface: #1c1818;
+}
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #161313; --fg: #f1eeee; --dim: #9a9898; --faint: #646262;
-    --line: #302c2c; --accent: #f59e0b; --active: #211d1d;
+  :root:not([data-theme="light"]) {
+    --bg: #161313;
+    --fg: #f1eeee;
+    --dim: #9a9898;
+    --faint: #646262;
+    --line: #302c2c;
+    --accent: #f59e0b;
+    --active: #211d1d;
+    --surface: #1c1818;
   }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
-  margin: 0; background: var(--bg); color: var(--fg);
-  font-family: var(--mono); font-size: 14.5px; line-height: 1.65;
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 14.5px;
+  line-height: 1.65;
 }
 a { color: inherit; text-decoration: none; }
-a:hover { color: var(--fg); }
+a:hover { color: var(--accent); }
+button, input, select { font: inherit; }
 [hidden] { display: none !important; }
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.top { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-bottom: 1px solid var(--line); }
-.brand { font-weight: 600; letter-spacing: -.01em; }
+/* Header */
+.top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--line);
+  position: relative;
+}
+.brand { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
 .brand span { color: var(--faint); }
-.nav { display: flex; gap: 1rem; font-size: 13px; color: var(--dim); }
+.nav { display: flex; align-items: center; gap: 1rem; font-size: 13px; color: var(--dim); }
+.nav a { min-height: 40px; display: flex; align-items: center; }
+.theme-select {
+  border: 1px solid var(--line); background: var(--bg); color: var(--dim);
+  border-radius: 4px; padding: .25rem .4rem; min-height: 32px; font-size: 12px;
+}
+.theme-select:hover { color: var(--fg); border-color: var(--fg); }
 .menu { display: none; }
-.menu summary { cursor: pointer; color: var(--dim); min-height: 44px; display: flex; align-items: center; list-style: none; }
+.menu summary {
+  cursor: pointer; color: var(--dim); min-height: 40px;
+  display: flex; align-items: center; list-style: none;
+}
 .menu summary::-webkit-details-marker { display: none; }
-.menu nav { display: flex; flex-direction: column; gap: .75rem; padding: .75rem 0; font-size: 13px; }
+.menu nav {
+  position: absolute; right: 1rem; top: 3.4rem; z-index: 5;
+  display: flex; flex-direction: column; gap: .5rem;
+  padding: .75rem 1rem; min-width: 180px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 6px;
+}
+.menu nav a, .menu nav label { min-height: 36px; display: flex; align-items: center; gap: .5rem; font-size: 13px; color: var(--dim); }
 
-.wrap { max-width: 64rem; margin: 0 auto; padding: 0 1rem; }
+/* Layout */
+.wrap { max-width: 68rem; margin: 0 auto; padding: 0 1rem; }
 @media (min-width: 640px) { .wrap { padding: 0 1.5rem; } }
 
+/* Hero */
 .hero { margin: 2.5rem 0 0; }
-.hero h1 { margin: 0 0 .35rem; font-size: clamp(1.5rem, 4vw, 2.25rem); font-weight: 600; letter-spacing: -.01em; line-height: 1.2; }
+.eyebrow {
+  font-size: 11px; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--accent); margin: 0 0 .5rem;
+}
+.hero h1 {
+  margin: 0 0 .35rem;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
 .dim { color: var(--dim); margin: 0; max-width: 72ch; }
+.hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+.action {
+  border: 1px solid var(--line); background: var(--bg); color: var(--dim);
+  padding: .35rem .6rem; border-radius: 4px; min-height: 36px; font-size: 12px;
+  cursor: pointer;
+}
+.action:hover { color: var(--fg); border-color: var(--accent); }
+.action:disabled { opacity: .5; cursor: progress; }
+.sync-note { font-size: 11px; color: var(--faint); }
 
+/* Search */
 .searchwrap { margin: 2rem 0 0; }
-.searchbox { display: flex; align-items: center; height: 52px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); padding: 0 .85rem; gap: .6rem; }
+.searchbox {
+  display: flex; align-items: center; height: 52px;
+  border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); padding: 0 .85rem; gap: .6rem;
+}
 .searchbox:focus-within { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
 .prompt { color: var(--accent); font-weight: 600; }
-#q { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--fg); font: inherit; font-size: 15px; height: 100%; }
+#q {
+  flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+  color: var(--fg); font: inherit; font-size: 15px; height: 100%;
+}
 #q:disabled { cursor: progress; }
 #q::placeholder { color: var(--faint); }
-.hint { border: 1px solid var(--line); border-radius: 4px; padding: 0 .35rem; color: var(--dim); font-size: 12px; line-height: 1.4; }
+.hint {
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: 0 .35rem; color: var(--dim); font-size: 12px; line-height: 1.4;
+}
 @media (hover: none) { .hint { display: none; } }
 
-.panel { border: 1px solid var(--line); border-top: 0; border-radius: 0 0 6px 6px; background: var(--bg); overflow: hidden; }
+.panel {
+  border: 1px solid var(--line); border-top: 0;
+  border-radius: 0 0 6px 6px; background: var(--bg); overflow: hidden;
+}
 .results { list-style: none; margin: 0; padding: 0; }
 .res { display: flex; min-height: 44px; border-left: 2px solid transparent; }
 .res.active { background: var(--active); border-left-color: var(--accent); }
-.reslink { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 0 .75rem; width: 100%; padding: .45rem .85rem; align-items: center; }
+.reslink {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  gap: 0 .75rem;
+  width: 100%; padding: .45rem .85rem; align-items: center;
+}
 .rname { font-weight: 600; font-size: 14px; grid-column: 1; }
-.rkind { grid-column: 2; grid-row: 1; color: var(--dim); font-size: 12px; }
-.rsum { grid-column: 1 / 3; grid-row: 2; color: var(--dim); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-mark { background: transparent; color: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 2px; }
+.rkind { grid-column: 2; grid-row: 1; color: var(--dim); font-size: 11px; }
+.rsum {
+  grid-column: 1 / 3; grid-row: 2; color: var(--dim); font-size: 12.5px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+mark {
+  background: transparent; color: inherit;
+  text-decoration: underline; text-decoration-color: var(--accent);
+  text-underline-offset: 2px;
+}
 .empty { padding: .85rem; color: var(--dim); font-size: 13px; }
 .suggestions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
-.sug { background: none; border: 1px solid var(--line); border-radius: 4px; color: var(--dim); font: inherit; font-size: 12px; padding: .25rem .5rem; cursor: pointer; min-height: 36px; }
-.sug:hover { color: var(--fg); border-color: var(--fg); }
+.sug {
+  background: none; border: 1px solid var(--line); border-radius: 4px;
+  color: var(--dim); font: inherit; font-size: 12px; padding: .25rem .5rem;
+  cursor: pointer; min-height: 32px;
+}
+.sug:hover { color: var(--fg); border-color: var(--accent); }
 
-.tabs { display: flex; flex-wrap: wrap; gap: .25rem 1.1rem; margin: 1.25rem 0 .5rem; font-size: 13px; }
-.tab { background: none; border: 0; padding: .4rem 0; min-height: 44px; color: var(--dim); font: inherit; cursor: pointer; border-bottom: 1px solid transparent; }
+/* Directory */
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 1rem; margin: 2rem 0 .5rem;
+}
+.section-head h2 {
+  font-size: 13px; font-weight: 600; color: var(--faint);
+  text-transform: uppercase; letter-spacing: .08em; margin: 0;
+}
+.result-count { font-size: 11px; color: var(--faint); }
+
+/* Filters */
+.filters { margin: 1rem 0 0; }
+.filter-label {
+  display: block; font-size: 10px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+  color: var(--faint); margin: 0 0 .35rem;
+}
+.filter-label.spaced { margin-top: 1rem; }
+.tabs {
+  display: flex; flex-wrap: wrap; gap: .25rem 1.1rem;
+  margin: 0; font-size: 13px;
+}
+.tab {
+  background: none; border: 0; padding: .35rem 0; min-height: 38px;
+  color: var(--dim); font: inherit; cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
 .tab.active { color: var(--fg); border-bottom-color: var(--fg); }
 .tab:disabled { opacity: .5; cursor: progress; }
+.tab .count { color: var(--faint); font-size: 10.5px; margin-left: .15rem; }
+.category-tabs { gap: .3rem .35rem; }
+.category-tabs .tab {
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: .2rem .5rem; min-height: 30px; font-size: 12px;
+}
+.category-tabs .tab.active { border-color: var(--accent); background: var(--active); color: var(--fg); }
 
-.list-section { content-visibility: auto; contain-intrinsic-size: auto 600px; }
+/* Toolbar */
+.toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: .75rem; flex-wrap: wrap; margin: 1.1rem 0 1rem;
+}
+.sortbox { display: flex; align-items: center; gap: .5rem; color: var(--dim); font-size: 11px; }
+.sortbox label { color: var(--faint); }
+.sortbox select {
+  border: 1px solid var(--line); background: var(--bg); color: var(--fg);
+  padding: .3rem .4rem; border-radius: 4px; font-size: 12px; max-width: 100%;
+}
+.view-switch { display: flex; gap: .25rem; }
+.view-switch button {
+  border: 1px solid var(--line); border-radius: 4px;
+  background: var(--bg); color: var(--dim); font-size: 11.5px;
+  padding: .25rem .55rem; min-height: 32px; cursor: pointer;
+}
+.view-switch button.active { color: var(--fg); border-color: var(--accent); }
+
+/* Status */
 .loading { color: var(--dim); padding: 1rem 0; font-size: 13px; }
-.gh { font-size: 12px; font-weight: 600; color: var(--faint); text-transform: uppercase; letter-spacing: .08em; margin: 1.5rem 0 .35rem; }
+.error {
+  padding: .85rem; border: 1px solid var(--line); border-radius: 6px;
+  color: var(--dim); font-size: 13px;
+}
+.error strong { color: var(--fg); display: block; margin-bottom: .25rem; }
+.error p { margin: 0 0 .6rem; }
+
+/* List */
+.list-section { content-visibility: auto; contain-intrinsic-size: auto 800px; }
+.app-groups { display: grid; gap: 1.5rem; }
+@media (min-width: 760px) {
+  .app-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; }
+}
+.group { min-width: 0; }
+.gh {
+  font-size: 12px; font-weight: 600; color: var(--faint);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin: 0 0 .35rem;
+}
 .rows { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .row { border-bottom: 1px solid var(--line); }
-.row a { display: flex; align-items: baseline; gap: .6rem; padding: .55rem 0; min-height: 44px; }
-.row .mk { color: var(--faint); font-size: 12px; flex: 0 0 auto; }
-.row .nm { font-weight: 600; flex: 0 0 auto; }
-.row .sm { color: var(--dim); font-size: 13px; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row .kd { color: var(--faint); font-size: 11px; text-transform: lowercase; flex: 0 0 auto; }
+.row a {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: .15rem .6rem;
+  padding: .55rem 0; min-height: 44px;
+}
+.row .mk { color: var(--faint); font-size: 12px; }
+.row .content { min-width: 0; display: flex; flex-direction: column; gap: .1rem; }
+.row .nm { font-weight: 600; overflow-wrap: anywhere; }
+.row .sm {
+  color: var(--dim); font-size: 12.5px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.row .kd {
+  color: var(--faint); font-size: 10.5px; text-transform: lowercase;
+  white-space: nowrap; border: 1px solid var(--line);
+  border-radius: 3px; padding: 0 .3rem;
+}
 .row.sub { padding-left: 1.1rem; border-bottom-style: dashed; }
+.row.sub a { min-height: 40px; }
 
-.stats { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin: 2rem 0; font-size: 12.5px; color: var(--dim); }
+/* Cards view */
+.cards-view { display: block; }
+.cards-view .group { margin-bottom: 1.5rem; }
+.cards-view .rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: .5rem;
+  border-top: none;
+}
+.cards-view .row {
+  border: 1px solid var(--line); border-radius: 5px;
+  padding: 0 .75rem; background: var(--surface);
+}
+.cards-view .row a {
+  grid-template-columns: minmax(0, 1fr);
+  padding: .65rem 0; min-height: auto;
+}
+.cards-view .row .mk { display: none; }
+.cards-view .row .kd { justify-self: start; margin-top: .35rem; }
+.cards-view .row .sm { white-space: normal; }
+
+/* Density */
+.compact .row a { padding: .35rem 0; min-height: 36px; }
+.compact .row.sub a { padding: .3rem 0; min-height: 34px; }
+.compact.cards-view .row a { padding: .5rem 0; }
+
+.empty-list { padding: 1rem 0; color: var(--dim); font-size: 13px; }
+
+/* Stats */
+.stats {
+  display: flex; flex-wrap: wrap; gap: .6rem 1.75rem;
+  margin: 2.5rem 0 1rem;
+  border-top: 1px solid var(--line); padding-top: 1.2rem;
+  font-size: 12px; color: var(--dim);
+}
 .fig { color: var(--faint); }
+.stats b { color: var(--fg); }
 
+/* FAQ */
 .faq { margin: 2rem 0 3rem; }
-.faq h2 { font-size: 13px; color: var(--faint); text-transform: uppercase; letter-spacing: .08em; margin: 0 0 .75rem; }
-.faq details { border-top: 1px solid var(--line); padding: .65rem 0; }
-.faq summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--fg); }
-.faq p { color: var(--dim); max-width: 72ch; margin: .5rem 0 0; }
-code { font-family: inherit; color: var(--fg); }
+.faq h2 {
+  font-size: 13px; color: var(--faint);
+  text-transform: uppercase; letter-spacing: .08em;
+  margin: 0 0 .75rem;
+}
+.faq details { border-top: 1px solid var(--line); padding: .55rem 0; }
+.faq summary {
+  cursor: pointer; min-height: 40px; display: flex; align-items: center;
+  color: var(--fg); font-size: 13px;
+}
+.faq p { color: var(--dim); max-width: 72ch; margin: .35rem 0 .5rem; font-size: 13px; }
+code {
+  font-family: inherit; color: var(--fg);
+  background: var(--active); padding: .05rem .25rem; border-radius: 3px;
+  font-size: 12.5px;
+}
 
-.foot { padding-top: 1.5rem; padding-bottom: 2.5rem; border-top: 1px solid var(--line); color: var(--faint); font-size: 12px; }
+/* Footer */
+.foot {
+  padding-top: 1.5rem; padding-bottom: 2.5rem;
+  border-top: 1px solid var(--line); color: var(--faint); font-size: 12px;
+}
 .foot p { margin: 0; }
 .foot a { color: var(--dim); }
 
-@media (max-width: 520px) { .nav { display: none; } .menu { display: block; } }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+@media (max-width: 520px) {
+  .nav { display: none; }
+  .menu { display: block; }
+  .hero { margin-top: 1.75rem; }
+  .row a { grid-template-columns: 1.5rem minmax(0, 1fr); }
+  .row .kd { grid-column: 2; justify-self: start; margin-top: .2rem; }
+  .cards-view .row .kd { grid-column: auto; }
+  .section-head { flex-wrap: wrap; gap: .35rem; }
+  .toolbar { gap: .5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
 </style>
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="./">aznur<span>/</span>index</a>
+  <a class="brand" href="./" aria-label="Aznur Index home">aznur<span>/</span>index</a>
   <nav class="nav" aria-label="Primary">
+    <a href="#directory">Directory</a>
     <a href="https://github.com/aznur1111-web" target="_blank" rel="noopener noreferrer">GitHub</a>
     <a href="#faq">About</a>
+    <label class="sr-only" for="theme">Theme</label>
+    <select id="theme" class="theme-select">
+      <option value="system">system</option>
+      <option value="light">light</option>
+      <option value="dark">dark</option>
+    </select>
   </nav>
   <details class="menu">
     <summary aria-label="Menu">menu</summary>
     <nav aria-label="Mobile">
+      <a href="#directory">Directory</a>
       <a href="https://github.com/aznur1111-web" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a href="#faq">About</a>
+      <label>Theme <select id="theme-mobile" class="theme-select">
+        <option value="system">system</option>
+        <option value="light">light</option>
+        <option value="dark">dark</option>
+      </select></label>
     </nav>
   </details>
 </header>
+
 <main class="wrap">
   <section class="hero">
+    <p class="eyebrow">Aznur tools · searchable directory</p>
     <h1>Every Aznur web app, one search away.</h1>
     <p class="dim">Describe what you need. The right app appears.</p>
+    <div class="hero-actions">
+      <button type="button" class="action" id="refresh">↻ Refresh</button>
+      <span class="sync-note" id="sync-note">Preparing…</span>
+    </div>
   </section>
+
   <div class="searchwrap">
     <div class="searchbox">
       <span class="prompt" aria-hidden="true">&gt;</span>
+      <label class="sr-only" for="q">Search apps and tools</label>
       <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Loading apps…" role="combobox" aria-expanded="false" aria-controls="results" aria-autocomplete="list" aria-describedby="hint" disabled>
       <kbd class="hint" id="hint" aria-hidden="true">/</kbd>
     </div>
@@ -142,131 +414,171 @@ code { font-family: inherit; color: var(--fg); }
     </div>
     <p id="live" class="sr-only" aria-live="polite"></p>
   </div>
-  <div class="tabs" role="group" aria-label="Filter">
-    <button type="button" class="tab active" data-filter="all" aria-pressed="true" disabled>all</button>
-    <button type="button" class="tab" data-filter="apps" aria-pressed="false" disabled>apps</button>
-    <button type="button" class="tab" data-filter="calculators" aria-pressed="false" disabled>calculators</button>
-    <button type="button" class="tab" data-filter="tutors" aria-pressed="false" disabled>tutors</button>
-    <button type="button" class="tab" data-filter="tools" aria-pressed="false" disabled>tools</button>
-  </div>
-  <section class="list-section" id="list">
-    <p class="loading" id="status">Loading apps from GitHub…</p>
+
+  <section id="directory">
+    <div class="section-head">
+      <h2>Browse directory</h2>
+      <span id="shown-count" class="result-count">Loading…</span>
+    </div>
+
+    <div class="filters">
+      <span class="filter-label">Content type</span>
+      <div class="tabs" id="type-tabs" role="group" aria-label="Filter by content type">
+        <button type="button" class="tab active" data-type="all" aria-pressed="true" disabled>Everything</button>
+        <button type="button" class="tab" data-type="app" aria-pressed="false" disabled>Apps</button>
+        <button type="button" class="tab" data-type="calculator" aria-pressed="false" disabled>Calculators</button>
+        <button type="button" class="tab" data-type="tutorial" aria-pressed="false" disabled>Tutorials &amp; notes</button>
+        <button type="button" class="tab" data-type="tool" aria-pressed="false" disabled>Tools</button>
+        <button type="button" class="tab" data-type="dataset" aria-pressed="false" disabled>Data &amp; references</button>
+      </div>
+      <span class="filter-label spaced">Subject</span>
+      <div class="tabs category-tabs" id="category-tabs" role="group" aria-label="Filter by subject">
+        <button type="button" class="tab active" data-category="all" aria-pressed="true" disabled>All</button>
+        <button type="button" class="tab" data-category="engineering" aria-pressed="false" disabled>Engineering</button>
+        <button type="button" class="tab" data-category="computing" aria-pressed="false" disabled>Computing &amp; AI</button>
+        <button type="button" class="tab" data-category="finance" aria-pressed="false" disabled>Finance</button>
+        <button type="button" class="tab" data-category="agriculture" aria-pressed="false" disabled>Agriculture</button>
+        <button type="button" class="tab" data-category="science" aria-pressed="false" disabled>Science</button>
+        <button type="button" class="tab" data-category="media" aria-pressed="false" disabled>Media</button>
+        <button type="button" class="tab" data-category="productivity" aria-pressed="false" disabled>Productivity</button>
+        <button type="button" class="tab" data-category="education" aria-pressed="false" disabled>Learning</button>
+        <button type="button" class="tab" data-category="data" aria-pressed="false" disabled>Data &amp; GIS</button>
+        <button type="button" class="tab" data-category="other" aria-pressed="false" disabled>Other</button>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="sortbox">
+        <label for="sort">Sort</label>
+        <select id="sort" disabled>
+          <option value="featured">Featured first</option>
+          <option value="az">Name: A–Z</option>
+          <option value="updated">Recently updated</option>
+        </select>
+        <label for="density" class="sr-only">Density</label>
+        <select id="density" disabled>
+          <option value="comfortable">Comfortable</option>
+          <option value="compact">Compact</option>
+        </select>
+      </div>
+      <div class="view-switch" role="group" aria-label="Display layout">
+        <button type="button" data-view="list" class="active" aria-pressed="true">List</button>
+        <button type="button" data-view="cards" aria-pressed="false">Cards</button>
+      </div>
+    </div>
+
+    <p class="loading" id="status" aria-live="polite">Loading apps from GitHub…</p>
+    <section class="list-section" id="list" aria-live="polite"></section>
   </section>
+
   <section class="stats" aria-label="Statistics">
     <div><span class="fig">Fig 1.</span> <b id="stat-apps">–</b> apps</div>
-    <div><span class="fig">Fig 2.</span> <b id="stat-tools">–</b> tools &amp; calculators</div>
-    <div><span class="fig">Fig 3.</span> synced <time id="stat-synced" datetime="">–</time></div>
+    <div><span class="fig">Fig 2.</span> <b id="stat-calculators">–</b> calculators</div>
+    <div><span class="fig">Fig 3.</span> <b id="stat-tutorials">–</b> tutorials &amp; notes</div>
+    <div><span class="fig">Fig 4.</span> synced <time id="stat-synced" datetime="">–</time></div>
   </section>
+
   <section class="faq" id="faq">
-    <h2>FAQ</h2>
+    <h2>About this directory</h2>
     <details>
-      <summary>What is this?</summary>
-      <p>A static, searchable index of every web app, calculator and tool published by aznur1111-web on GitHub Pages. The list is fetched from the GitHub API when the page loads, so it is always fresh. Nothing is tracked.</p>
+      <summary>How are repositories discovered?</summary>
+      <p>The index reads public repositories belonging to <code>aznur1111-web</code>, keeps repositories with GitHub Pages enabled, and excludes forks, archived repositories and the hub itself. New Pages-enabled projects appear on the next refresh; no manual list of URLs is needed.</p>
     </details>
     <details>
       <summary>How does search work?</summary>
-      <p>Each app can describe itself with an <code>aznur.json</code> manifest. When the page loads, the manifests are fetched, an inverted index is built in your browser, synonyms are expanded, and ranking is applied. No servers, no third parties.</p>
+      <p>Each app can describe itself with an <code>aznur.json</code> manifest at the repo root. The page fetches manifests, builds an inverted index in your browser, expands synonyms and ranks with field weights. Without a manifest, the page infers a name, description, type and subject from the repo name, description and GitHub topics.</p>
     </details>
     <details>
       <summary>How do I add an app?</summary>
-      <p>Enable GitHub Pages on the repo, then add an <code>aznur.json</code> to its root. Reload this page and the app appears. Repos without a manifest still appear, using the repo name and description.</p>
+      <p>Enable GitHub Pages on the repo. Add <code>aznur.json</code> to describe it, or let it be inferred from the repo name and description. The next time this page loads, the app appears.</p>
     </details>
     <details>
       <summary>Is anything tracked?</summary>
-      <p>No cookies, no analytics, no fonts, no third-party requests. The only network calls are to <code>api.github.com</code> and <code>raw.githubusercontent.com</code> to list your apps.</p>
+      <p>No analytics, cookies or search uploads. Search runs in your browser. The only network calls go to <code>api.github.com</code> and <code>raw.githubusercontent.com</code> to list your apps.</p>
+    </details>
+    <details>
+      <summary>How can I add tools within an existing app?</summary>
+      <p>Use the <code>tools</code> array in <code>aznur.json</code>. Each tool can have a <code>name</code>, <code>path</code>, <code>summary</code>, <code>kind</code> and <code>concepts</code>. The path must stay on the same site origin.</p>
     </details>
   </section>
 </main>
+
 <footer class="foot wrap">
-  <p><a href="https://github.com/aznur1111-web" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="#faq">About</a> · © 2025 Aznur Index</p>
+  <p><a href="https://github.com/aznur1111-web" target="_blank" rel="noopener noreferrer">GitHub</a> · <a href="#directory">Directory</a> · <a href="#faq">About</a> · © <span id="year">2026</span> Aznur Index</p>
 </footer>
+
 <script>
 (function () {
   'use strict';
 
-  var CONFIG = {
-    user: 'aznur1111-web',
-    hubRepo: 'Aznur',
-    customDomains: {}
+  var CONFIG = { user: 'aznur1111-web', hubRepo: 'Aznur', customDomains: {}, maxPages: 5 };
+  var TYPES = ['app', 'calculator', 'tutorial', 'tool', 'dataset'];
+  var TYPE_LABELS = { app: 'app', calculator: 'calculator', tutorial: 'tutorial / notes', tool: 'tool', dataset: 'data / reference' };
+
+  var CATEGORIES = {
+    engineering: ['engineering','mechanical','electrical','electronics','civil engineering','chemical engineering','thermodynamics','compressor','transistor','circuit','fpga','verilog','hardware','signal processing','control system','robotics','manufacturing'],
+    computing: ['computer science','computing','programming','code','software','developer','javascript','python','rust','c++','ai','artificial intelligence','machine learning','neural network','xai','algorithm','data structure','network protocol','compression','webapp','web app','html','linux'],
+    finance: ['finance','financial','money','investment','stock','portfolio','budget','salary','loan','tax','vat','profit','business','accounting','economics','roi','interest','currency'],
+    agriculture: ['agriculture','agro','farm','farming','fertilizer','crop','soil','plant','azolla','livestock','animal feed','fish','aquaculture','biogas','biochar','agronomy','irrigation','compost','greenhouse'],
+    science: ['science','physics','chemistry','biology','mathematics','math','environment','radioactivity','climate','energy','solar','electricity','battery','health','research'],
+    media: ['image','photo','video','audio','media','compressor','transcode','codec','music','document','pdf','svg','design','graphics'],
+    productivity: ['productivity','document','pdf','notes','task','workflow','automation','office','file','organize','convert','compress','calculator','utility'],
+    education: ['tutorial','tutorials','lesson','learn','learning','education','course','curriculum','notes','guide','reference','explainer','beginner','lab','teaching'],
+    data: ['gis','geospatial','geodata','map','mapping','dataset','open data','data science','visualization','chart','csv','json','database','statistics','remote sensing']
+  };
+  var CATEGORY_LABELS = {
+    engineering: 'Engineering', computing: 'Computing & AI', finance: 'Finance',
+    agriculture: 'Agriculture', science: 'Science', media: 'Media',
+    productivity: 'Productivity', education: 'Learning', data: 'Data & GIS', other: 'Other'
   };
 
   var SYNONYMS = [
-    ['compress', 'compression', 'shrink', 'reduce', 'optimize', 'squeeze', 'make smaller'],
-    ['image', 'photo', 'picture', 'img', 'photograph'],
-    ['audio', 'sound', 'music', 'track'],
-    ['video', 'movie', 'clip', 'film'],
-    ['document', 'pdf', 'text', 'doc'],
-    ['convert', 'transform', 'export', 'change format'],
-    ['calculator', 'compute', 'calculate', 'calculation'],
-    ['finance', 'money', 'loan', 'interest', 'financial'],
-    ['currency', 'exchange', 'forex', 'fx'],
-    ['unit', 'measure', 'metric', 'imperial', 'conversion'],
-    ['machine learning', 'ml', 'model', 'ai'],
-    ['neural network', 'deep learning', 'neural', 'network'],
-    ['backpropagation', 'backprop', 'gradient descent', 'gradient'],
-    ['reinforcement learning', 'rl', 'agent', 'policy'],
-    ['q-learning', 'q learning', 'qlearning', 'q'],
-    ['gridworld', 'grid world', 'environment', 'world'],
-    ['tutor', 'teach', 'learn', 'explain', 'lesson'],
-    ['programming', 'code', 'software', 'coding', 'developer'],
-    ['c', 'c++', 'cpp', 'cplusplus'],
-    ['python', 'py'],
-    ['javascript', 'js', 'ecmascript'],
-    ['energy', 'power', 'electricity', 'watt'],
-    ['ev', 'electric vehicle', 'battery', 'charging'],
-    ['solar', 'renewable', 'photovoltaic'],
-    ['jpeg', 'jpg', 'webp', 'avif', 'png', 'image format'],
-    ['mp3', 'wav', 'ogg', 'audio format'],
-    ['mp4', 'webm', 'video format'],
-    ['merge', 'combine', 'join', 'union'],
-    ['split', 'cut', 'divide', 'separate'],
-    ['crop', 'trim', 'resize', 'scale'],
-    ['rotate', 'flip', 'orientation'],
-    ['filter', 'effect', 'adjust'],
-    ['color', 'colour', 'palette', 'hue'],
-    ['font', 'typeface', 'typography'],
-    ['markdown', 'md', 'commonmark'],
-    ['json', 'yaml', 'csv', 'toml'],
-    ['hash', 'checksum', 'digest', 'sha'],
-    ['encrypt', 'cipher', 'decrypt', 'secure'],
-    ['password', 'passphrase', 'credential'],
-    ['random', 'generate', 'generator', 'uuid'],
-    ['date', 'time', 'timezone', 'clock'],
-    ['age', 'birthday', 'birthdate'],
-    ['bmi', 'body', 'health', 'fitness'],
-    ['calorie', 'diet', 'food', 'nutrition'],
-    ['tax', 'vat', 'gst', 'duty'],
-    ['salary', 'wage', 'income', 'pay'],
-    ['mortgage', 'home loan', 'housing'],
-    ['investment', 'stock', 'portfolio', 'share'],
-    ['compound interest', 'compound', 'interest rate'],
-    ['percentage', 'percent', 'ratio'],
-    ['area', 'volume', 'geometry', 'shape'],
-    ['speed', 'velocity', 'distance', 'pace'],
-    ['temperature', 'heat', 'celsius', 'fahrenheit', 'kelvin'],
-    ['length', 'width', 'height', 'meter', 'feet'],
-    ['weight', 'mass', 'kilogram', 'pound', 'kg'],
-    ['data', 'storage', 'bytes', 'megabyte', 'gigabyte'],
-    ['bandwidth', 'network', 'speed test'],
-    ['password strength', 'strength', 'entropy'],
-    ['qr code', 'barcode', 'qr'],
-    ['uuid', 'guid', 'identifier'],
-    ['regex', 'regular expression', 'pattern'],
-    ['diff', 'compare', 'difference'],
-    ['base64', 'encode', 'decode'],
-    ['url', 'uri', 'link'],
-    ['contrast', 'accessibility', 'a11y'],
-    ['minify', 'optimize', 'compress code'],
-    ['format', 'pretty', 'beautify'],
-    ['validate', 'check', 'verify'],
-    ['simulate', 'simulation', 'model run'],
-    ['visualize', 'visualization', 'chart', 'plot'],
-    ['matrix', 'vector', 'linear algebra'],
-    ['calculus', 'derivative', 'integral'],
-    ['physics', 'chemistry', 'biology', 'science']
+    ['compress','compression','shrink','reduce','optimize','squeeze','make smaller'],
+    ['image','photo','picture','img','photograph'],
+    ['audio','sound','music','track'],
+    ['video','movie','clip','film'],
+    ['document','pdf','text','doc'],
+    ['convert','transform','export','change format'],
+    ['calculator','compute','calculate','calculation'],
+    ['finance','money','loan','interest','financial'],
+    ['currency','exchange','forex','fx'],
+    ['unit','measure','metric','imperial','conversion'],
+    ['machine learning','ml','model','ai'],
+    ['neural network','deep learning','neural'],
+    ['tutor','tutorial','teach','learn','explain','lesson','notes','guide'],
+    ['programming','code','software','coding','developer'],
+    ['c','c++','cpp','cplusplus'],
+    ['python','py'],
+    ['javascript','js','ecmascript'],
+    ['energy','power','electricity','watt'],
+    ['ev','electric vehicle','battery','charging'],
+    ['solar','renewable','photovoltaic'],
+    ['merge','combine','join','union'],
+    ['split','cut','divide','separate'],
+    ['crop','trim','resize','scale'],
+    ['hash','checksum','digest','sha'],
+    ['encrypt','cipher','decrypt','secure'],
+    ['password','passphrase','credential'],
+    ['tax','vat','gst','duty'],
+    ['salary','wage','income','pay'],
+    ['investment','stock','portfolio','share'],
+    ['percentage','percent','ratio'],
+    ['area','volume','geometry','shape'],
+    ['data','storage','bytes','megabyte','gigabyte'],
+    ['regex','regular expression','pattern'],
+    ['validate','check','verify'],
+    ['visualize','visualization','chart','plot']
   ];
 
-  var STOP = new Set(['the','a','an','and','or','of','to','in','on','for','with','is','are','be','by','at','as','it','this','that','from','your','you','we','our']);
+  var STOP = new Set(['the','a','an','and','or','of','to','in','on','for','with','is','are','be','by','at','as','it','this','that','from','your','you','we','our','all']);
+
+  var allEntries = [], searchFn = null, searchIndex = null;
+  var activeType = 'all', activeCategory = 'all';
+  var sortMode = 'featured', viewMode = 'list', density = 'comfortable';
+  var searchResults = [], activeResult = -1;
+  var loading = false;
+
+  function $(id) { return document.getElementById(id); }
 
   function normalize(s) {
     return String(s == null ? '' : s).toLowerCase().normalize('NFKD')
@@ -292,224 +604,209 @@ code { font-family: inherit; color: var(--fg); }
   }
   function tokenizeAll(s) { var n = normalize(s); return n ? n.split(' ') : []; }
 
-  function makeSynMap(groups) {
-    var map = new Map();
-    for (var g = 0; g < groups.length; g++) {
-      var group = groups[g], singles = [];
-      for (var j = 0; j < group.length; j++) {
-        var ts = tokenizeAll(group[j]);
-        if (ts.length === 1) singles.push(stem(ts[0]));
-      }
-      for (var a = 0; a < singles.length; a++) {
-        if (!map.has(singles[a])) map.set(singles[a], new Set());
-        for (var b = 0; b < singles.length; b++) if (b !== a) map.get(singles[a]).add(singles[b]);
-      }
-    }
-    return map;
+  function sanitizeText(s, max) {
+    return String(s == null ? '' : s)
+      .replace(/[\u0000-\u001F\u007F]/g, ' ')
+      .replace(/[<>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, max || 240);
+  }
+  function prettifyName(s) { return String(s).replace(/[-_]+/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); }); }
+  function safeArray(x, max) {
+    return Array.isArray(x) ? x.slice(0, max || 40).map(function (v) { return sanitizeText(v, 100); }).filter(Boolean) : [];
   }
 
-  function buildIndex(entries, synGroups) {
-    var synMap = makeSynMap(synGroups || []);
-    var docs = [], post = new Map();
-    function bump(term, docId, weight) {
-      var m = post.get(term);
-      if (!m) { m = new Map(); post.set(term, m); }
-      var old = m.get(docId) || 0;
-      if (weight > old) m.set(docId, weight);
-    }
-    for (var i = 0; i < entries.length; i++) {
-      var e = entries[i];
-      var nameTokens = tokenize(e.name);
-      docs.push({ n: e.name, s: e.summary || '', u: e.url, k: e.kind || 'app', f: e.featured ? 1 : 0, p: e.parent == null ? -1 : e.parent, x: nameTokens.join(' ') });
-      addField(e.name, 10); addField((e.aliases || []).join(' '), 8); addField((e.concepts || []).join(' '), 6);
-      addField((e.toolNames || []).join(' '), 5); addField(e.summary || '', 2); addField(e.autoText || '', 1);
-    }
-    function addField(text, weight) {
-      var tokens = tokenize(text);
-      for (var t = 0; t < tokens.length; t++) {
-        var tok = tokens[t], docId = docs.length - 1;
-        bump(tok, docId, weight);
-        var syns = synMap.get(tok);
-        if (syns) syns.forEach(function (s) { bump(s, docId, weight * 0.4); });
-      }
-    }
-    var terms = Array.from(post.keys()).sort();
-    var postings = terms.map(function (t) {
-      var arr = [];
-      post.get(t).forEach(function (w, id) { arr.push(id, Math.round(w * 100)); });
-      return arr;
-    });
-    var sugg = [];
-    for (var k = 0; k < terms.length; k++) {
-      if (terms[k].length >= 4 && !STOP.has(terms[k])) {
-        var df = post.get(terms[k]).size;
-        if (df >= 2) sugg.push([terms[k], df]);
-      }
-    }
-    sugg.sort(function (a, b) { return b[1] - a[1] || a[0].localeCompare(b[0]); });
-    return { v: 1, N: entries.length, terms: terms, postings: postings, docs: docs, sugg: sugg.slice(0, 12).map(function (x) { return x[0]; }) };
-  }
-
-  function lowerBound(arr, x) {
-    var lo = 0, hi = arr.length;
-    while (lo < hi) { var mid = (lo + hi) >> 1; if (arr[mid] < x) lo = mid + 1; else hi = mid; }
-    return lo;
-  }
-  function editDistance(a, b, max) {
-    var la = a.length, lb = b.length;
-    if (Math.abs(la - lb) > max) return max + 1;
-    var prev = new Array(lb + 1), curr = new Array(lb + 1);
-    for (var j = 0; j <= lb; j++) prev[j] = j;
-    for (var i = 1; i <= la; i++) {
-      curr[0] = i;
-      var rowMin = curr[0], ca = a.charCodeAt(i - 1);
-      for (var j2 = 1; j2 <= lb; j2++) {
-        var cost = ca === b.charCodeAt(j2 - 1) ? 0 : 1;
-        curr[j2] = Math.min(prev[j2] + 1, curr[j2 - 1] + 1, prev[j2 - 1] + cost);
-        if (curr[j2] < rowMin) rowMin = curr[j2];
-      }
-      if (rowMin > max) return max + 1;
-      var tmp = prev; prev = curr; curr = tmp;
-    }
-    return prev[lb];
-  }
-  function makeSearch(index) {
-    var terms = index.terms, postings = index.postings, docs = index.docs, N = index.N || docs.length;
-    var termMap = new Map();
-    for (var i = 0; i < terms.length; i++) termMap.set(terms[i], postings[i]);
-    var fuzzyCache = new Map();
-    function idf(df) { return Math.log(1 + (N - df + 0.5) / (df + 0.5)); }
-    function termWeights(token) {
-      var out = new Map();
-      if (termMap.has(token)) out.set(token, 1);
-      var start = lowerBound(terms, token), count = 0;
-      for (var i2 = start; i2 < terms.length && terms[i2].startsWith(token); i2++) {
-        if (!out.has(terms[i2])) out.set(terms[i2], 0.7);
-        if (++count >= 40) break;
-      }
-      if (out.size) return out;
-      if (token.length >= 4) {
-        var cached = fuzzyCache.get(token);
-        if (!cached) {
-          var max = token.length >= 8 ? 2 : 1;
-          cached = [];
-          for (var k = 0; k < terms.length; k++) {
-            if (Math.abs(terms[k].length - token.length) > max) continue;
-            if (editDistance(token, terms[k], max) <= max) cached.push(terms[k]);
-            if (cached.length >= 20) break;
-          }
-          fuzzyCache.set(token, cached);
-        }
-        for (var c = 0; c < cached.length; c++) out.set(cached[c], 0.4);
-      }
-      return out;
-    }
-    function scoreDocs(tokenWeights, requireAll) {
-      var scores = new Map(), tokenCount = tokenWeights.length;
-      for (var ti = 0; ti < tokenWeights.length; ti++) {
-        var tw = tokenWeights[ti], local = new Map();
-        tw.forEach(function (boost, term) {
-          var post = termMap.get(term);
-          if (!post) return;
-          var idfVal = idf(post.length / 2);
-          for (var p = 0; p < post.length; p += 2) {
-            var docId = post[p], w = post[p + 1] / 100;
-            local.set(docId, (local.get(docId) || 0) + w * boost * idfVal);
-          }
-        });
-        if (requireAll) {
-          if (ti === 0) { local.forEach(function (s, id) { scores.set(id, { score: s, coverage: 1 }); }); }
-          else {
-            Array.from(scores.keys()).forEach(function (id) {
-              if (local.has(id)) { scores.get(id).score += local.get(id); scores.get(id).coverage++; }
-              else scores.delete(id);
-            });
-          }
-          if (scores.size === 0) return scores;
-        } else {
-          local.forEach(function (s, id) {
-            if (!scores.has(id)) scores.set(id, { score: 0, coverage: 0 });
-            var rec = scores.get(id); rec.score += s; rec.coverage++;
-          });
-        }
-      }
-      scores.forEach(function (rec) { rec.score *= (0.5 + 0.5 * (rec.coverage / tokenCount)); });
-      return scores;
-    }
-    return function search(query, filter) {
-      var raw = String(query || '').trim();
-      if (!raw) return [];
-      var tokens = tokenize(raw);
-      if (!tokens.length) return [];
-      var qNorm = tokens.join(' ');
-      var allowed = filter && filter !== 'all' ? filter : null;
-      function ok(id) { return !allowed || docs[id].k === allowed || (allowed === 'apps' && docs[id].k === 'app'); }
-      var tWs = tokens.map(termWeights);
-      var scores = scoreDocs(tWs, true);
-      if (scores.size < 3) {
-        var orScores = scoreDocs(tWs, false);
-        orScores.forEach(function (rec, id) { if (!scores.has(id)) scores.set(id, rec); });
-      }
-      var ranked = [];
-      scores.forEach(function (rec, id) {
-        if (!ok(id)) return;
-        var s = rec.score;
-        if (docs[id].x === qNorm) s += 10000;
-        if (docs[id].f) s += 2;
-        ranked.push([id, s]);
-      });
-      ranked.sort(function (a, b) { return b[1] - a[1] || docs[a[0]].n.localeCompare(docs[b[0]].n); });
-      return ranked.slice(0, 8).map(function (r) { return r[0]; });
-    };
-  }
-
-  function sanitizeText(s) {
-    return String(s == null ? '' : s).replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim().slice(0, 200);
-  }
-  function prettifyName(s) {
-    return String(s).replace(/[-_]/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-  }
   function getAppUrl(repo) {
     if (CONFIG.customDomains[repo.name]) return CONFIG.customDomains[repo.name];
     if (repo.name === CONFIG.user + '.github.io') return 'https://' + CONFIG.user + '.github.io/';
-    return 'https://' + CONFIG.user + '.github.io/' + repo.name + '/';
+    return 'https://' + CONFIG.user + '.github.io/' + encodeURIComponent(repo.name) + '/';
   }
-  function toolUrl(base, path) {
+  function safeToolUrl(base, path) {
     try {
       var u = new URL(path, base);
-      if (u.origin !== new URL(base).origin) return null;
+      if (u.origin !== new URL(base).origin || u.protocol !== 'https:') return null;
       return u.href;
     } catch (e) { return null; }
   }
 
+  function inferType(name, desc, topics, manifest) {
+    var mKind = normalize(manifest && manifest.kind || '');
+    if (TYPES.indexOf(mKind) >= 0) return mKind;
+    if (mKind === 'tutor') return 'tutorial';
+    if (mKind === 'reference' || mKind === 'data') return 'dataset';
+    var raw = normalize([name, desc, (topics || []).join(' ')].join(' '));
+    if (/\b(calculator|calculators|calc|estimator)\b/.test(raw)) return 'calculator';
+    if (/\b(tutorial|tutorials|lesson|lessons|course|curriculum|learning lab|guide|handbook|explainer|notes)\b/.test(raw)) return 'tutorial';
+    if (/\b(dataset|open data|data catalog|reference library|documentation|docs)\b/.test(raw)) return 'dataset';
+    if (/\b(tool|utility|utilities|converter|compressor|generator|formatter|validator)\b/.test(raw)) return 'tool';
+    return 'app';
+  }
+  function inferCategories(entry, manifest) {
+    var out = [];
+    var raw = normalize([entry.name, entry.summary, (entry.topics || []).join(' '),
+      (entry.aliases || []).join(' '), (entry.concepts || []).join(' '),
+      (entry.categories || []).join(' ')].join(' '));
+    var supplied = safeArray(manifest && manifest.categories, 20).map(function (c) { return normalize(c); });
+    Object.keys(CATEGORIES).forEach(function (cat) {
+      var hit = supplied.some(function (c) { return c === cat || c.indexOf(cat) >= 0; });
+      if (!hit) hit = CATEGORIES[cat].some(function (word) { return raw.indexOf(normalize(word)) >= 0; });
+      if (hit) out.push(cat);
+    });
+    if (!out.length) out.push('other');
+    return out;
+  }
+
+  function makeSynMap(groups) {
+    var map = new Map();
+    groups.forEach(function (group) {
+      var words = [];
+      group.forEach(function (x) {
+        var t = tokenize(x);
+        if (t.length === 1) words.push(t[0]);
+      });
+      words.forEach(function (w) {
+        if (!map.has(w)) map.set(w, new Set());
+        words.forEach(function (v) { if (v !== w) map.get(w).add(v); });
+      });
+    });
+    return map;
+  }
+
+  function editDistance(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    var p = [], c = [], i, j;
+    for (j = 0; j <= b.length; j++) p[j] = j;
+    for (i = 1; i <= a.length; i++) {
+      c[0] = i;
+      var min = i;
+      for (j = 1; j <= b.length; j++) {
+        c[j] = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (c[j] < min) min = c[j];
+      }
+      if (min > max) return max + 1;
+      var tmp = p; p = c; c = tmp;
+    }
+    return p[b.length];
+  }
+
+  function buildIndex(entries) {
+    var syn = makeSynMap(SYNONYMS);
+    var docs = entries.slice();
+    var post = new Map();
+
+    function bump(term, id, weight) {
+      if (!post.has(term)) post.set(term, new Map());
+      var m = post.get(term);
+      m.set(id, Math.max(m.get(id) || 0, weight));
+    }
+
+    entries.forEach(function (e, id) {
+      function add(text, weight) {
+        tokenize(text).forEach(function (t) {
+          bump(t, id, weight);
+          var ss = syn.get(t);
+          if (ss) ss.forEach(function (s) { bump(s, id, weight * 0.35); });
+        });
+      }
+      add(e.name, 12);
+      add(e.aliases.join(' '), 9);
+      add(e.concepts.join(' '), 7);
+      add(e.toolNames.join(' '), 5);
+      add(e.categories.join(' '), 4);
+      add(e.summary, 3);
+      add(e.topics.join(' '), 4);
+      add(e.repo, 1);
+    });
+
+    var terms = Array.from(post.keys()).sort();
+    var termMap = new Map();
+    terms.forEach(function (t) { termMap.set(t, post.get(t)); });
+
+    var qNorm = '';
+    var cache = new Map();
+
+    function search(query) {
+      var toks = Array.from(new Set(tokenize(query)));
+      if (!toks.length) return [];
+      var qn = normalize(query);
+      var scores = new Map();
+
+      toks.forEach(function (t) {
+        var candidates = [];
+        if (termMap.has(t)) candidates.push([t, 1]);
+        terms.forEach(function (x) {
+          if (x !== t && x.indexOf(t) === 0 && t.length >= 2 && candidates.length < 25) candidates.push([x, 0.65]);
+        });
+        if (!candidates.length && t.length >= 4) {
+          var near = 0;
+          terms.some(function (x) {
+            if (Math.abs(x.length - t.length) <= 1 && editDistance(t, x, 1) <= 1) {
+              candidates.push([x, 0.35]);
+              return ++near >= 8;
+            }
+            return false;
+          });
+        }
+        var local = new Map();
+        candidates.forEach(function (pair) {
+          var p = termMap.get(pair[0]);
+          if (!p) return;
+          var idf = Math.log(1 + (docs.length - p.size + 0.5) / (p.size + 0.5));
+          p.forEach(function (w, id) {
+            local.set(id, (local.get(id) || 0) + w * pair[1] * idf);
+          });
+        });
+        local.forEach(function (v, id) { scores.set(id, (scores.get(id) || 0) + v); });
+      });
+
+      var ranked = [];
+      scores.forEach(function (s, id) {
+        var e = docs[id];
+        if (activeType !== 'all' && e.kind !== activeType) return;
+        if (activeCategory !== 'all' && e.categories.indexOf(activeCategory) < 0) return;
+        var score = s;
+        if (normalize(e.name) === qn) score += 10000;
+        if (e.featured) score += 2;
+        if (normalize(e.name).indexOf(qn) >= 0) score += 3;
+        ranked.push([id, score]);
+      });
+      ranked.sort(function (a, b) { return b[1] - a[1] || docs[a[0]].name.localeCompare(docs[b[0]].name); });
+      return ranked.slice(0, 8).map(function (r) { return r[0]; });
+    }
+    return { search: search, terms: terms, docs: docs };
+  }
+
   async function fetchAllRepos() {
     var all = [];
-    for (var page = 1; page <= 5; page++) {
-      var res = await fetch('https://api.github.com/users/' + CONFIG.user + '/repos?per_page=100&page=' + page + '&sort=updated', {
-        headers: { 'Accept': 'application/vnd.github+json' }
-      });
+    for (var page = 1; page <= CONFIG.maxPages; page++) {
+      var url = 'https://api.github.com/users/' + CONFIG.user + '/repos?per_page=100&page=' + page + '&sort=updated';
+      var res = await fetch(url, { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' });
       if (!res.ok) {
-        if (res.status === 403) {
+        if (res.status === 403 || res.status === 429) {
           var reset = res.headers.get('x-ratelimit-reset');
-          var time = reset ? new Date(parseInt(reset, 10) * 1000).toLocaleTimeString() : 'soon';
-          throw new Error('GitHub rate limit hit. Try again after ' + time + '.');
+          var when = reset ? new Date(Number(reset) * 1000).toLocaleTimeString() : 'later';
+          throw new Error('GitHub API rate limit reached. Try again after ' + when + '.');
         }
         throw new Error('GitHub API returned ' + res.status);
       }
       var batch = await res.json();
-      if (!Array.isArray(batch) || batch.length === 0) break;
-      all.push.apply(all, batch);
+      if (!Array.isArray(batch) || !batch.length) break;
+      all = all.concat(batch);
       if (batch.length < 100) break;
     }
     return all;
   }
 
   async function fetchManifest(repo) {
-    var url = 'https://raw.githubusercontent.com/' + CONFIG.user + '/' + repo.name + '/' + (repo.default_branch || 'main') + '/aznur.json';
+    var branch = repo.default_branch || 'main';
+    var url = 'https://raw.githubusercontent.com/' + CONFIG.user + '/' + encodeURIComponent(repo.name)
+      + '/' + encodeURIComponent(branch) + '/aznur.json?v=' + encodeURIComponent(repo.updated_at || '');
     try {
-      var res = await fetch(url);
+      var res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) return null;
-      return await res.json();
+      var m = await res.json();
+      return m && typeof m === 'object' ? m : null;
     } catch (e) { return null; }
   }
 
@@ -517,289 +814,454 @@ code { font-family: inherit; color: var(--fg); }
     var filtered = repos.filter(function (r) {
       return r.has_pages && !r.fork && !r.archived && r.name !== CONFIG.hubRepo;
     });
-    var manifests = await Promise.all(filtered.map(function (r) { return fetchManifest(r); }));
+    var manifests = await Promise.all(filtered.map(fetchManifest));
     var entries = [];
-    for (var i = 0; i < filtered.length; i++) {
-      var repo = filtered[i], m = manifests[i], appUrl = getAppUrl(repo);
-      if (m && m.hidden === true) continue;
-      if (!m) {
-        m = { name: prettifyName(repo.name), summary: repo.description || '', kind: 'app', concepts: [], aliases: [], tools: [] };
-      }
-      var parent = entries.length;
-      entries.push({
-        name: sanitizeText(m.name) || prettifyName(repo.name),
-        summary: sanitizeText(m.summary),
-        kind: ['app', 'calculator', 'tutor', 'tool'].indexOf(m.kind) >= 0 ? m.kind : 'app',
+
+    filtered.forEach(function (repo, i) {
+      var m = manifests[i] || {};
+      if (m.hidden === true) return;
+      var appUrl = getAppUrl(repo);
+      var name = sanitizeText(m.name) || prettifyName(repo.name);
+      var summary = sanitizeText(m.summary || repo.description || 'Aznur project published on GitHub Pages.');
+      var kind = inferType(name, summary, repo.topics || [], m);
+      var entry = {
+        id: repo.id,
+        name: name,
+        summary: summary,
+        kind: kind,
         url: appUrl,
-        aliases: Array.isArray(m.aliases) ? m.aliases.slice(0, 40).map(sanitizeText) : [],
-        concepts: Array.isArray(m.concepts) ? m.concepts.slice(0, 40).map(sanitizeText) : [],
+        repo: repo.name,
+        topics: Array.isArray(repo.topics) ? repo.topics : [],
+        aliases: safeArray(m.aliases),
+        concepts: safeArray(m.concepts),
+        categories: [],
         toolNames: [],
-        autoText: '',
         featured: m.featured === true,
+        updated: repo.updated_at || '',
         parent: -1
-      });
+      };
+      entry.categories = inferCategories(entry, m);
+      entries.push(entry);
+
       if (Array.isArray(m.tools)) {
-        for (var t = 0; t < m.tools.length; t++) {
-          var tool = m.tools[t];
-          if (!tool || !tool.name || !tool.path) continue;
-          var tUrl = toolUrl(appUrl, tool.path);
-          if (!tUrl) continue;
-          entries[parent].toolNames.push(sanitizeText(tool.name));
-          entries.push({
+        m.tools.slice(0, 100).forEach(function (tool) {
+          if (!tool || !tool.name || !tool.path) return;
+          var u = safeToolUrl(appUrl, tool.path);
+          if (!u) return;
+          entry.toolNames.push(sanitizeText(tool.name));
+          var child = {
+            id: String(repo.id) + '-' + tool.name,
             name: sanitizeText(tool.name),
             summary: sanitizeText(tool.summary),
-            kind: ['app', 'calculator', 'tutor', 'tool'].indexOf(tool.kind) >= 0 ? tool.kind : 'tool',
-            url: tUrl,
-            aliases: [],
-            concepts: Array.isArray(tool.concepts) ? tool.concepts.slice(0, 40).map(sanitizeText) : [],
+            kind: TYPES.indexOf(tool.kind) >= 0 ? tool.kind : 'tool',
+            url: u,
+            repo: repo.name,
+            topics: entry.topics,
+            aliases: safeArray(tool.aliases),
+            concepts: safeArray(tool.concepts),
+            categories: [],
             toolNames: [],
-            autoText: '',
             featured: false,
-            parent: parent
-          });
-        }
+            updated: entry.updated,
+            parent: entry.id
+          };
+          child.categories = inferCategories(child, { categories: tool.categories || m.categories });
+          entries.push(child);
+        });
       }
-    }
+    });
     return entries;
   }
 
-  function makeRow(entry, isSub) {
+  function typeAllowed(e) { return activeType === 'all' || e.kind === activeType; }
+  function categoryAllowed(e) { return activeCategory === 'all' || e.categories.indexOf(activeCategory) >= 0; }
+
+  function makeRow(e, isSub) {
     var li = document.createElement('li');
     li.className = 'row' + (isSub ? ' sub' : '');
-    li.dataset.kind = entry.kind;
+    li.dataset.kind = e.kind;
     var a = document.createElement('a');
-    a.href = entry.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-    var mk = document.createElement('span'); mk.className = 'mk'; mk.setAttribute('aria-hidden', 'true'); mk.textContent = isSub ? '└' : '[*]';
-    var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = entry.name;
-    var sm = document.createElement('span'); sm.className = 'sm'; sm.textContent = entry.summary || '';
-    var kd = document.createElement('span'); kd.className = 'kd'; kd.textContent = entry.kind;
-    a.append(mk, nm, sm, kd); li.append(a);
+    a.href = e.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    var mk = document.createElement('span');
+    mk.className = 'mk'; mk.setAttribute('aria-hidden', 'true');
+    mk.textContent = isSub ? '└' : '[*]';
+    var content = document.createElement('span');
+    content.className = 'content';
+    var nm = document.createElement('span');
+    nm.className = 'nm'; nm.textContent = e.name;
+    var sm = document.createElement('span');
+    sm.className = 'sm'; sm.textContent = e.summary;
+    content.append(nm, sm);
+    var kd = document.createElement('span');
+    kd.className = 'kd'; kd.textContent = TYPE_LABELS[e.kind] || e.kind;
+    a.append(mk, content, kd);
+    li.append(a);
     return li;
   }
 
-  function renderList(entries) {
-    var container = document.getElementById('list');
-    while (container.firstChild) container.removeChild(container.firstChild);
-    var groups = [['app', 'Apps'], ['calculator', 'Calculators'], ['tutor', 'Tutors'], ['tool', 'Tools']];
-    for (var g = 0; g < groups.length; g++) {
-      var kind = groups[g][0], label = groups[g][1], tops = [];
-      for (var i = 0; i < entries.length; i++) if (entries[i].parent === -1 && entries[i].kind === kind) tops.push(i);
-      if (!tops.length) continue;
-      var h = document.createElement('h2'); h.className = 'gh'; h.textContent = label; container.append(h);
-      var ul = document.createElement('ul'); ul.className = 'rows';
-      for (var t = 0; t < tops.length; t++) {
-        ul.append(makeRow(entries[tops[t]], false));
-        for (var s = 0; s < entries.length; s++) if (entries[s].parent === tops[t]) ul.append(makeRow(entries[s], true));
-      }
-      container.append(ul);
-    }
+  function filteredEntries() {
+    var out = allEntries.filter(function (e) { return typeAllowed(e) && categoryAllowed(e); });
+    if (sortMode === 'az') out.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    else if (sortMode === 'updated') out.sort(function (a, b) { return String(b.updated).localeCompare(String(a.updated)); });
+    else out.sort(function (a, b) { return Number(b.featured) - Number(a.featured) || a.name.localeCompare(b.name); });
+    return out;
   }
 
-  function updateStats(entries) {
-    var apps = entries.filter(function (e) { return e.parent === -1; }).length;
-    var tools = entries.filter(function (e) { return e.parent >= 0; }).length;
-    document.getElementById('stat-apps').textContent = apps;
-    document.getElementById('stat-tools').textContent = tools;
-    var time = document.getElementById('stat-synced');
-    var now = new Date().toISOString().slice(0, 10);
-    time.textContent = now;
-    time.setAttribute('datetime', now);
-  }
-
-  function enableSearch(index) {
-    var input = document.getElementById('q');
-    var panel = document.getElementById('panel');
-    var listbox = document.getElementById('results');
-    var live = document.getElementById('live');
-    var empty = document.getElementById('empty');
-    var sugg = document.getElementById('suggestions');
-    var tabs = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
-    var listRows = Array.prototype.slice.call(document.querySelectorAll('[data-kind]'));
-    var search = makeSearch(index);
-    var results = [], active = -1, filter = 'all';
-    var hosts = index.hosts || [CONFIG.user + '.github.io'];
-
-    function okHost(u) {
-      try {
-        var x = new URL(u);
-        return x.protocol === 'https:' && hosts.some(function (h) { return x.hostname === h || x.hostname.endsWith('.' + h); });
-      } catch (e) { return false; }
+  function renderList() {
+    var container = $('list');
+    container.textContent = '';
+    var entries = filteredEntries();
+    $('shown-count').textContent = entries.length + ' item' + (entries.length === 1 ? '' : 's');
+    if (!entries.length) {
+      var p = document.createElement('p');
+      p.className = 'empty-list';
+      p.textContent = allEntries.length
+        ? 'No items in this combination yet. Try another content type or subject.'
+        : 'No published GitHub Pages repositories found.';
+      container.append(p);
+      return;
     }
-
-    var rowEls = [];
-    for (var i = 0; i < 8; i++) {
-      var li = document.createElement('li');
-      li.className = 'res'; li.id = 'res-' + i; li.setAttribute('role', 'option'); li.setAttribute('aria-selected', 'false'); li.hidden = true;
-      var a = document.createElement('a');
-      a.className = 'reslink'; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.tabIndex = -1;
-      var name = document.createElement('span'); name.className = 'rname';
-      var sum = document.createElement('span'); sum.className = 'rsum';
-      var kind = document.createElement('span'); kind.className = 'rkind';
-      a.append(name, sum, kind); li.append(a); listbox.append(li);
-      rowEls.push({ li: li, a: a, name: name, sum: sum, kind: kind });
-    }
-
-    function wordList(q) { return normalize(q).split(' ').filter(Boolean); }
-    function close() { panel.hidden = true; input.setAttribute('aria-expanded', 'false'); input.removeAttribute('aria-activedescendant'); active = -1; }
-    function open() { panel.hidden = false; input.setAttribute('aria-expanded', 'true'); }
-    function setActive(idx) {
-      if (idx < 0 || idx >= results.length) return;
-      active = idx;
-      rowEls.forEach(function (r, j) {
-        var on = j === idx;
-        r.li.classList.toggle('active', on);
-        r.li.setAttribute('aria-selected', on ? 'true' : 'false');
+    var topEntries = entries.filter(function (e) { return e.parent === -1; });
+    var children = entries.filter(function (e) { return e.parent !== -1; });
+    var groups = [
+      ['app', 'Apps'], ['calculator', 'Calculators'], ['tutorial', 'Tutorials & notes'],
+      ['tool', 'Tools'], ['dataset', 'Data & references']
+    ];
+    var layout = document.createElement('div');
+    layout.className = 'app-groups' + (viewMode === 'cards' ? ' cards-view' : '') + (density === 'compact' ? ' compact' : '');
+    groups.forEach(function (group) {
+      var groupEntries = topEntries.filter(function (e) { return e.kind === group[0]; });
+      if (!groupEntries.length) return;
+      var section = document.createElement('section');
+      section.className = 'group';
+      var h = document.createElement('h3');
+      h.className = 'gh';
+      h.textContent = group[1] + ' · ' + groupEntries.length;
+      section.append(h);
+      var ul = document.createElement('ul');
+      ul.className = 'rows';
+      groupEntries.forEach(function (e) {
+        ul.append(makeRow(e, false));
+        children.filter(function (c) { return c.parent === e.id && entries.indexOf(c) >= 0; })
+          .forEach(function (c) { ul.append(makeRow(c, true)); });
       });
-      input.setAttribute('aria-activedescendant', 'res-' + idx);
+      section.append(ul);
+      layout.append(section);
+    });
+    container.append(layout);
+  }
+
+  function updateStats() {
+    var top = allEntries.filter(function (e) { return e.parent === -1; });
+    $('stat-apps').textContent = top.filter(function (e) { return e.kind === 'app'; }).length;
+    $('stat-calculators').textContent = top.filter(function (e) { return e.kind === 'calculator'; }).length;
+    $('stat-tutorials').textContent = top.filter(function (e) { return e.kind === 'tutorial'; }).length;
+    var now = new Date();
+    var stamp = now.toISOString();
+    $('stat-synced').textContent = now.toLocaleString();
+    $('stat-synced').setAttribute('datetime', stamp);
+  }
+
+  function updateTabCounts() {
+    document.querySelectorAll('[data-type]').forEach(function (b) {
+      var t = b.dataset.type;
+      var n = t === 'all'
+        ? allEntries.filter(function (e) { return e.parent === -1; }).length
+        : allEntries.filter(function (e) { return e.parent === -1 && e.kind === t; }).length;
+      var old = b.querySelector('.count'); if (old) old.remove();
+      var span = document.createElement('span');
+      span.className = 'count'; span.textContent = n;
+      b.append(span);
+    });
+    document.querySelectorAll('[data-category]').forEach(function (b) {
+      var c = b.dataset.category;
+      var n = c === 'all'
+        ? allEntries.filter(function (e) { return e.parent === -1; }).length
+        : allEntries.filter(function (e) { return e.parent === -1 && e.categories.indexOf(c) >= 0; }).length;
+      var old = b.querySelector('.count'); if (old) old.remove();
+      var span = document.createElement('span');
+      span.className = 'count'; span.textContent = n;
+      b.append(span);
+    });
+  }
+
+  function okHost(url) {
+    try {
+      var u = new URL(url);
+      return u.protocol === 'https:'
+        && (u.hostname === CONFIG.user + '.github.io' || u.hostname.endsWith('.' + CONFIG.user + '.github.io'));
+    } catch (e) { return false; }
+  }
+
+  function wordList(q) { return normalize(q).split(' ').filter(Boolean); }
+
+  function highlight(node, text, words) {
+    node.textContent = '';
+    if (!words.length) { node.textContent = text; return; }
+    var lower = text.toLowerCase(), marks = [];
+    words.forEach(function (w) {
+      var from = 0;
+      while (w) {
+        var p = lower.indexOf(w, from);
+        if (p < 0) break;
+        marks.push([p, p + w.length]);
+        from = p + w.length;
+      }
+    });
+    marks.sort(function (a, b) { return a[0] - b[0]; });
+    var merged = [];
+    marks.forEach(function (m) {
+      var last = merged[merged.length - 1];
+      if (last && m[0] <= last[1]) last[1] = Math.max(last[1], m[1]);
+      else merged.push(m.slice());
+    });
+    var cursor = 0;
+    merged.forEach(function (m) {
+      if (m[0] > cursor) node.append(document.createTextNode(text.slice(cursor, m[0])));
+      var mark = document.createElement('mark');
+      mark.textContent = text.slice(m[0], m[1]);
+      node.append(mark);
+      cursor = m[1];
+    });
+    if (cursor < text.length) node.append(document.createTextNode(text.slice(cursor)));
+  }
+
+  function closeSearch() {
+    $('panel').hidden = true;
+    $('q').setAttribute('aria-expanded', 'false');
+    $('q').removeAttribute('aria-activedescendant');
+    activeResult = -1;
+  }
+  function setActive(i) {
+    var lis = $('results').querySelectorAll('.res');
+    if (i < 0 || i >= searchResults.length) return;
+    activeResult = i;
+    lis.forEach(function (li, j) {
+      li.classList.toggle('active', j === i);
+      li.setAttribute('aria-selected', j === i ? 'true' : 'false');
+    });
+    $('q').setAttribute('aria-activedescendant', 'res-' + i);
+  }
+  function renderSearch(q) {
+    var words = wordList(q);
+    searchResults = searchFn ? searchFn(q) : [];
+    var list = $('results'), empty = $('empty');
+    list.textContent = '';
+    $('live').textContent = searchResults.length
+      ? searchResults.length + ' result' + (searchResults.length === 1 ? '' : 's')
+      : 'No results';
+    if (!searchResults.length) {
+      empty.hidden = false;
+      list.hidden = true;
+      $('suggestions').textContent = '';
+      ['engineering', 'finance', 'agriculture', 'image compressor', 'python', 'tutorial'].forEach(function (term) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.className = 'sug'; b.textContent = term;
+        b.addEventListener('click', function () {
+          $('q').value = term;
+          $('q').focus();
+          renderSearch(term);
+        });
+        $('suggestions').append(b);
+      });
+      $('panel').hidden = false;
+      $('q').setAttribute('aria-expanded', 'true');
+      activeResult = -1;
+      return;
     }
-    function highlight(node, text, words) {
-      while (node.firstChild) node.removeChild(node.firstChild);
-      if (!words || !words.length) { node.textContent = text; return; }
-      var lower = text.toLowerCase(), marks = [];
-      for (var w = 0; w < words.length; w++) {
-        if (!words[w]) continue;
-        var from = 0;
-        while (true) {
-          var pos = lower.indexOf(words[w], from);
-          if (pos < 0) break;
-          marks.push([pos, pos + words[w].length]);
-          from = pos + words[w].length;
+    empty.hidden = true;
+    list.hidden = false;
+    searchResults.forEach(function (id, i) {
+      var e = allEntries[id];
+      if (!e || !okHost(e.url)) return;
+      var li = document.createElement('li');
+      li.className = 'res';
+      li.id = 'res-' + i;
+      li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', 'false');
+      var a = document.createElement('a');
+      a.className = 'reslink';
+      a.href = e.url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      var nm = document.createElement('span');
+      nm.className = 'rname';
+      highlight(nm, e.name, words);
+      var sm = document.createElement('span');
+      sm.className = 'rsum';
+      highlight(sm, e.summary, words);
+      var kd = document.createElement('span');
+      kd.className = 'rkind';
+      kd.textContent = (TYPE_LABELS[e.kind] || e.kind);
+      a.append(nm, sm, kd);
+      li.append(a);
+      li.addEventListener('mouseenter', function () { setActive(i); });
+      a.addEventListener('click', function (ev) { if (!okHost(a.href)) ev.preventDefault(); });
+      list.append(li);
+    });
+    $('panel').hidden = false;
+    $('q').setAttribute('aria-expanded', 'true');
+    if (searchResults.length) setActive(0);
+  }
+
+  function bindUI() {
+    document.querySelectorAll('[data-type]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        activeType = b.dataset.type;
+        document.querySelectorAll('[data-type]').forEach(function (x) {
+          var on = x === b;
+          x.classList.toggle('active', on);
+          x.setAttribute('aria-pressed', String(on));
+        });
+        renderList();
+        if ($('q').value.trim()) renderSearch($('q').value.trim());
+      });
+    });
+    document.querySelectorAll('[data-category]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        activeCategory = b.dataset.category;
+        document.querySelectorAll('[data-category]').forEach(function (x) {
+          var on = x === b;
+          x.classList.toggle('active', on);
+          x.setAttribute('aria-pressed', String(on));
+        });
+        renderList();
+        if ($('q').value.trim()) renderSearch($('q').value.trim());
+      });
+    });
+
+    $('q').addEventListener('input', function () {
+      var q = $('q').value.trim();
+      if (q) renderSearch(q); else closeSearch();
+    });
+    $('q').addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeResult + 1, searchResults.length - 1)); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeResult - 1, 0)); }
+      else if (e.key === 'Escape') {
+        if ($('q').value) { $('q').value = ''; closeSearch(); }
+        else closeSearch();
+      } else if (e.key === 'Enter' && !$('panel').hidden && activeResult >= 0) {
+        var entry = allEntries[searchResults[activeResult]];
+        if (entry && okHost(entry.url)) {
+          e.preventDefault();
+          window.open(entry.url, '_blank', 'noopener,noreferrer');
         }
       }
-      if (!marks.length) { node.textContent = text; return; }
-      marks.sort(function (x, y) { return x[0] - y[0] || x[1] - y[1]; });
-      var merged = [];
-      for (var m = 0; m < marks.length; m++) {
-        var last = merged[merged.length - 1];
-        if (last && marks[m][0] <= last[1]) last[1] = Math.max(last[1], marks[m][1]);
-        else merged.push(marks[m].slice());
-      }
-      var cursor = 0;
-      for (var k = 0; k < merged.length; k++) {
-        var start = merged[k][0], end = merged[k][1];
-        if (start > cursor) node.appendChild(document.createTextNode(text.slice(cursor, start)));
-        var mk = document.createElement('mark');
-        mk.textContent = text.slice(start, end);
-        node.appendChild(mk);
-        cursor = end;
-      }
-      if (cursor < text.length) node.appendChild(document.createTextNode(text.slice(cursor)));
-    }
-    function render(q) {
-      var words = wordList(q);
-      results = search(q, filter);
-      live.textContent = results.length ? results.length + ' result' + (results.length === 1 ? '' : 's') : 'No results';
-      if (!results.length) {
-        empty.hidden = false; listbox.hidden = true;
-        while (sugg.firstChild) sugg.removeChild(sugg.firstChild);
-        var terms = (index.sugg || []).slice(0, 3);
-        terms.forEach(function (term) {
-          var b = document.createElement('button');
-          b.type = 'button'; b.className = 'sug'; b.textContent = term;
-          b.addEventListener('click', function () { input.value = term; input.focus(); render(term); });
-          sugg.append(b);
-        });
-        open(); active = -1; return;
-      }
-      empty.hidden = true; listbox.hidden = false;
-      for (var i2 = 0; i2 < rowEls.length; i2++) {
-        var r = rowEls[i2];
-        if (i2 >= results.length) { r.li.hidden = true; continue; }
-        var doc = index.docs[results[i2]];
-        if (!okHost(doc.u)) { r.li.hidden = true; continue; }
-        r.li.hidden = false;
-        r.a.href = doc.u;
-        highlight(r.name, doc.n, words);
-        highlight(r.sum, doc.s || '', words);
-        r.kind.textContent = doc.k;
-        r.a.setAttribute('aria-label', doc.n + ', ' + doc.k + '. ' + (doc.s || ''));
-      }
-      setActive(0); open();
-    }
-
-    input.addEventListener('input', function () {
-      var q = input.value.trim();
-      if (!q) { close(); live.textContent = ''; return; }
-      render(q);
-    });
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowDown') { e.preventDefault(); if (!panel.hidden) setActive(Math.min(active + 1, results.length - 1)); }
-      else if (e.key === 'ArrowUp') { e.preventDefault(); if (!panel.hidden) setActive(Math.max(active - 1, 0)); }
-      else if (e.key === 'Enter') { if (!panel.hidden && active >= 0 && results[active] != null) { e.preventDefault(); window.open(index.docs[results[active]].u, '_blank', 'noopener,noreferrer'); } }
-      else if (e.key === 'Escape') { input.value = ''; close(); live.textContent = ''; }
-    });
-    rowEls.forEach(function (r, i) {
-      r.li.addEventListener('mouseenter', function () { setActive(i); });
-      r.a.addEventListener('click', function (e) {
-        e.preventDefault();
-        if (okHost(r.a.href)) window.open(r.a.href, '_blank', 'noopener,noreferrer');
-      });
     });
     document.addEventListener('keydown', function (e) {
       var t = e.target;
-      var typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
-      if ((e.key === '/' && !typing) || ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k')) {
-        e.preventDefault(); input.focus(); input.select();
+      var typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+      if (!typing && (e.key === '/' || ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'))) {
+        e.preventDefault();
+        $('q').focus();
+        $('q').select();
       }
     });
     document.addEventListener('click', function (e) {
-      if (!panel.hidden && !panel.contains(e.target) && e.target !== input) close();
+      if (!$('panel').hidden && !$('panel').contains(e.target) && e.target !== $('q')) closeSearch();
     });
-    tabs.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        filter = btn.dataset.filter;
-        tabs.forEach(function (b) {
-          var on = b === btn;
-          b.classList.toggle('active', on);
-          b.setAttribute('aria-pressed', on ? 'true' : 'false');
+
+    $('sort').addEventListener('change', function () { sortMode = this.value; renderList(); });
+    $('density').addEventListener('change', function () { density = this.value; renderList(); });
+    document.querySelectorAll('[data-view]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        viewMode = b.dataset.view;
+        document.querySelectorAll('[data-view]').forEach(function (x) {
+          var on = x === b;
+          x.classList.toggle('active', on);
+          x.setAttribute('aria-pressed', String(on));
         });
-        listRows.forEach(function (r) {
-          var k = r.dataset.kind;
-          r.hidden = !(filter === 'all' || k === filter || (filter === 'apps' && k === 'app'));
-        });
-        if (input.value.trim()) render(input.value.trim());
-        else close();
+        renderList();
       });
     });
 
-    input.disabled = false;
-    input.placeholder = 'Describe what you need…';
-    tabs.forEach(function (t) { t.disabled = false; });
+    function setTheme(v) {
+      if (v === 'system') document.documentElement.removeAttribute('data-theme');
+      else document.documentElement.setAttribute('data-theme', v);
+      try { localStorage.setItem('aznur-index-theme', v); } catch (e) {}
+      $('theme').value = v;
+      $('theme-mobile').value = v;
+    }
+    ['theme', 'theme-mobile'].forEach(function (id) {
+      $(id).addEventListener('change', function () { setTheme(this.value); });
+    });
+    try {
+      var saved = localStorage.getItem('aznur-index-theme');
+      if (saved) setTheme(saved);
+    } catch (e) {}
+
+    $('refresh').addEventListener('click', function () { load(true); });
   }
 
   async function load() {
-    var status = document.getElementById('status');
-    status.hidden = false;
-    status.textContent = 'Loading apps from GitHub…';
+    if (loading) return;
+    loading = true;
+    var refresh = $('refresh');
+    refresh.disabled = true;
+    refresh.textContent = '↻ Refreshing…';
+    $('status').hidden = false;
+    $('status').className = 'loading';
+    $('status').textContent = 'Discovering GitHub Pages projects…';
+    $('sync-note').textContent = 'Fetching latest repository data…';
+
     try {
       var repos = await fetchAllRepos();
       var entries = await buildEntries(repos);
       if (!entries.length) {
-        status.textContent = 'No apps found. Enable GitHub Pages on at least one repo, or add aznur.json to a repo.';
+        allEntries = [];
+        $('status').textContent = 'No GitHub Pages projects found. Enable Pages for a repository and try again.';
         return;
       }
-      status.hidden = true;
-      var index = buildIndex(entries, SYNONYMS);
-      index.hosts = [CONFIG.user + '.github.io'];
-      renderList(entries);
-      updateStats(entries);
-      enableSearch(index);
+      allEntries = entries;
+      searchIndex = buildIndex(entries);
+      searchFn = searchIndex.search;
+
+      $('status').hidden = true;
+      renderList();
+      updateStats();
+      updateTabCounts();
+
+      $('q').disabled = false;
+      $('q').placeholder = 'Search by task, subject, or tool…';
+      document.querySelectorAll('[data-type],[data-category]').forEach(function (b) { b.disabled = false; });
+      $('sort').disabled = false;
+      $('density').disabled = false;
+
+      $('sync-note').textContent = 'Updated just now · ' + repos.length + ' repositories checked';
+      refresh.textContent = '↻ Refresh';
     } catch (err) {
-      status.textContent = '';
+      $('status').className = 'error';
+      $('status').textContent = '';
+      var strong = document.createElement('strong');
+      strong.textContent = 'Could not refresh the directory.';
       var p = document.createElement('p');
-      p.textContent = 'Could not load apps: ' + (err && err.message ? err.message : 'unknown error');
-      var btn = document.createElement('button');
-      btn.type = 'button'; btn.className = 'sug'; btn.textContent = 'retry';
-      btn.addEventListener('click', function () { load(); });
-      status.append(p, btn);
-      status.hidden = false;
+      p.textContent = (err && err.message ? err.message : 'Unknown error') + '. Your GitHub projects will reappear once the connection or rate limit clears.';
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'action';
+      b.textContent = 'Try again';
+      b.addEventListener('click', function () { load(true); });
+      $('status').append(strong, p, b);
+      $('sync-note').textContent = 'Refresh failed · existing content may be unavailable';
+    } finally {
+      loading = false;
+      refresh.disabled = false;
+      if (refresh.textContent === '↻ Refreshing…') refresh.textContent = '↻ Refresh';
     }
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', load);
-  } else {
+  function init() {
+    $('year').textContent = new Date().getFullYear();
+    bindUI();
     load();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
 </script>
