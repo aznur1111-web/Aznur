@@ -488,18 +488,12 @@ code {
       <summary>How does search work?</summary>
       <p>Each app can describe itself with an <code>aznur.json</code> manifest at the repo root. The page fetches manifests, builds an inverted index in your browser, expands synonyms and ranks with field weights. Without a manifest, the page infers a name, description, type and subject from the repo name, description and GitHub topics.</p>
     </details>
-    <details>
-      <summary>How do I add an app?</summary>
-      <p>Enable GitHub Pages on the repo. Add <code>aznur.json</code> to describe it, or let it be inferred from the repo name and description. The next time this page loads, the app appears.</p>
-    </details>
+   
     <details>
       <summary>Is anything tracked?</summary>
       <p>No analytics, cookies or search uploads. Search runs in your browser. The only network calls go to <code>api.github.com</code> and <code>raw.githubusercontent.com</code> to list your apps.</p>
     </details>
-    <details>
-      <summary>How can I add tools within an existing app?</summary>
-      <p>Use the <code>tools</code> array in <code>aznur.json</code>. Each tool can have a <code>name</code>, <code>path</code>, <code>summary</code>, <code>kind</code> and <code>concepts</code>. The path must stay on the same site origin.</p>
-    </details>
+    
   </section>
 </main>
 
